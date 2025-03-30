@@ -1,0 +1,38 @@
+# 👉 Create a new project folder and enter it
+mkdir aws-serverless-pipeline
+cd aws-serverless-pipeline
+
+# 👉 Initialize a CDK app in Python
+cdk init app --language python
+
+# 👉 Set up and activate a virtual environment
+python -m venv .venv
+. .venv/Scripts/activate  # (Windows Git Bash)
+
+# 👉 Install required Python dependencies
+pip install -r requirements.txt
+pip install aws-cdk-lib constructs
+
+# 👉 Create Lambda code folder
+mkdir lambda_app
+code lambda_app/handler.py  # (Paste your Lambda function code here)
+
+# 👉 Edit app.py to load your stack
+code app.py  # (Paste in updated App definition)
+
+# 👉 Edit your stack to define a Lambda
+code aws_serverless_pipeline/aws_serverless_pipeline_stack.py  # (Paste in Lambda resource)
+
+# 👉 Synthesize the CloudFormation template
+cdk synth
+
+# 👉 Bootstrap your AWS environment (once per account/region)
+cdk bootstrap
+
+# 👉 Deploy your CDK stack to AWS
+cdk deploy
+
+# 👉 Commit and push your project to GitHub
+git add .
+git commit -m "Initial Lambda CDK project fully deployed"
+git push
