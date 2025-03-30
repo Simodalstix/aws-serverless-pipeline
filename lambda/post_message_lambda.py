@@ -15,7 +15,7 @@ def lambda_handler(event, context):
         "message_id": str(uuid.uuid4()),
         "sender": body.get("sender", "anonymous"),
         "content": body.get("content", ""),
-        "timestamp": datetime.utcnow().isoformat()
+        "timestamp": datetime.now(datetime.timezone.utc).isoformat()
     }
 
     table.put_item(Item=message)

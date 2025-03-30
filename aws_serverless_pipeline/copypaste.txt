@@ -1,0 +1,4 @@
+curl -X POST \
+  -H "Content-Type: application/json" \
+  -d '{"sender": "Simon", "content": "This is a test message!"}' \
+  https://4dc74m9y8e.execute-api.us-west-2.amazonaws.com/prod/messages
