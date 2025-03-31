@@ -1,26 +1,37 @@
 import json
-import uuid
 import boto3
 import os
-from datetime import datetime
+import uuid
+from datetime import datetime, timezone
 
 dynamodb = boto3.resource('dynamodb')
-table_name = os.environ['MESSAGES_TABLE']
-table = dynamodb.Table(table_name)
+table = dynamodb.Table(os.environ['MESSAGES_TABLE'])
 
 def lambda_handler(event, context):
-    body = json.loads(event.get('body', '{}'))
+    try:
+        print("Received event:", event)
 
-    message = {
-        "message_id": str(uuid.uuid4()),
-        "sender": body.get("sender", "anonymous"),
-        "content": body.get("content", ""),
-        "timestamp": datetime.now(datetime.timezone.utc).isoformat()
-    }
+        body = json.loads(event['body'])
+        sender = body['sender']
+        content = body['content']
 
-    table.put_item(Item=message)
+        item = {
+            "message_id": str(uuid.uuid4()),
+            "sender": sender,
+            "content": content,
+            "timestamp": datetime.now(timezone.utc).isoformat()
+        }
 
-    return {
-        "statusCode": 200,
-        "body": json.dumps({"message": "Stored successfully", "item": message})
-    }
+        table.put_item(Item=item)
+
+        return {
+            "statusCode": 200,
+            "body": json.dumps({"message": "Stored successfully", "item": item})
+        }
+
+    except Exception as e:
+        print("Error:", str(e))
+        return {
+            "statusCode": 500,
+            "body": json.dumps({"message": "Internal server error", "error": str(e)})
+        }
