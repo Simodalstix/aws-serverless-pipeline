@@ -87,7 +87,15 @@ class MigrationChatStack(Stack):
             cognito_user_pools=[user_pool]
         )
 
-        messages = api.root.add_resource("messages")
+        messages = api.root.add_resource(
+            "messages",
+                default_cors_preflight_options=apigateway.CorsOptions(
+                    allow_origins=apigateway.Cors.ALL_ORIGINS,
+                    allow_methods=["GET", "POST"],
+                    allow_headers=["Authorization", "Content-Type"]
+                )
+        )
+
         messages.add_method(
             "POST",
             apigateway.LambdaIntegration(post_message_function),
