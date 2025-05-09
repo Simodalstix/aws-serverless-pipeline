@@ -1,58 +1,84 @@
+# Visitor Tracker – AWS Serverless Pipeline (CDK + Python)
 
-# Welcome to your CDK Python project!
+This project is a simple, serverless visitor tracking system built with the AWS CDK (Python). When someone visits my website or makes a GET request to the API Gateway endpoint, a Lambda function logs their IP address, timestamp, and User-Agent string to a DynamoDB table. At the same time, a visitor count is incremented and returned in the response.
 
-This is a blank project for CDK development with Python.
+It's designed as a learning project to explore how serverless systems work in practice — from API Gateway and Lambda to DynamoDB and IAM roles — using Infrastructure as Code.
 
-The `cdk.json` file tells the CDK Toolkit how to execute your app.
+## Architecture Overview
 
-This project is set up like a standard Python project.  The initialization
-process also creates a virtualenv within this project, stored under the `.venv`
-directory.  To create the virtualenv it assumes that there is a `python3`
-(or `python` for Windows) executable in your path with access to the `venv`
-package. If for any reason the automatic creation of the virtualenv fails,
-you can create the virtualenv manually.
+This CDK stack sets up:
 
-To manually create a virtualenv on MacOS and Linux:
+- API Gateway: Exposes a public GET endpoint
+- AWS Lambda: Handles logic for counting and logging visitors
+- DynamoDB: Stores both the total visitor count and individual log entries
+- IAM Roles: Grants least-privilege access to Lambda
 
-```
-$ python -m venv .venv
-```
+Planned improvements:
+- TTL settings for automatic log expiration
+- Optional API key protection
+- A separate /status endpoint for metrics
 
-After the init process completes and the virtualenv is created, you can use the following
-step to activate your virtualenv.
+## Getting Started
 
-```
-$ source .venv/bin/activate
-```
+### 1. Set up my Python environment (I need more muscle memory!)
 
-If you are a Windows platform, you would activate the virtualenv like this:
-
-```
-% .venv\Scripts\activate.bat
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
 ```
 
-Once the virtualenv is activated, you can install the required dependencies.
+### 2. Bootstrap my AWS environment (if needed)
 
-```
-$ pip install -r requirements.txt
-```
-
-At this point you can now synthesize the CloudFormation template for this code.
-
-```
-$ cdk synth
+```bash
+cdk bootstrap
 ```
 
-To add additional dependencies, for example other CDK libraries, just add
-them to your `setup.py` file and rerun the `pip install -r requirements.txt`
-command.
+### 3. Deploy the stack
 
-## Useful commands
+```bash
+cdk deploy
+```
 
- * `cdk ls`          list all stacks in the app
- * `cdk synth`       emits the synthesized CloudFormation template
- * `cdk deploy`      deploy this stack to your default AWS account/region
- * `cdk diff`        compare deployed stack with current state
- * `cdk docs`        open CDK documentation
+After deployment, the API endpoint will be output to the terminal.
 
-Enjoy!
+## How It Works
+
+Each request to the API:
+
+1. Triggers the Lambda function.
+2. Increments a counter in DynamoDB.
+3. Logs the visitor's IP, timestamp, and User-Agent.
+4. Returns the current visitor count as JSON.
+
+Example response:
+
+```json
+{
+  "visitor_count": 42
+}
+```
+
+## Tech Stack
+
+- AWS CDK (Python)
+- AWS Lambda
+- Amazon API Gateway
+- Amazon DynamoDB
+- Python + boto3
+
+## Goals and Reflections
+
+This project helped reinforce key concepts around:
+
+- API Gateway event structure and header parsing
+- Basic IAM permissions for Lambda-DynamoDB access
+- Using Python and boto3 to interact with AWS services
+- Writing repeatable infrastructure using CDK
+
+Next I'm going to expand on this with a simple CLI tool.
+
+## Author
+
+Simon Parker  
+https://simostack.com | https://github.com/Simodalstix
